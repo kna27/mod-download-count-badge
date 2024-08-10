@@ -20,7 +20,17 @@ app.get("/1.0.0", async (req, res) => {
     } catch (err) {
         console.error(err);
     }
-
+    if (req.query.format === "comma") {
+        downloads = downloads.toLocaleString();
+    } else if (req.query.format === "metric") {
+        const suffixes = ["", "K", "M", "B"];
+        let suffixIndex = 0;
+        while (downloads >= 1000) {
+            downloads /= 1000;
+            suffixIndex++;
+        }
+        downloads = `${downloads.toFixed(2)}${suffixes[suffixIndex]}`;
+    }
     res.json({
         schemaVersion: 1,
         label: "Downloads",
@@ -84,7 +94,7 @@ async function spacedock(id) {
         Accept: "application/json",
     };
     try {
-        const response = await axios.get(apiUrl);
+        const response = await axios.get(apiUrl, { headers });
         if (response.status === 200) {
             return response.data.downloads || 0;
         }
