@@ -1,0 +1,24 @@
+{
+  "name": "mod-download-count-badge",
+  "version": "1.0.0",
+  "description": "A badge showing the total number of downloads for your mod/addon across various platforms",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kna27/mod-download-count-badge.git"
+  },
+  "author": "kna27",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kna27/mod-download-count-badge/issues"
+  },
+  "homepage": "https://github.com/kna27/mod-download-count-badge#readme",
+  "dependencies": {
+    "axios": "^1.7.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
