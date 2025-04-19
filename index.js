@@ -4,21 +4,16 @@ const axios = require("axios");
 
 const app = express();
 
-app.get("/1.0.0", async (req, res) => {
+app.get("/", async (req, res) => {
     let downloads = 0;
-
-    try {
-        if (req.query.github) {
-            downloads += await tryGet(github, req.query.github);
-        }
-        if (req.query.curseforge) {
-            downloads += await tryGet(curseforge, req.query.curseforge);
-        }
-        if (req.query.spacedock) {
-            downloads += await tryGet(spacedock, req.query.spacedock);
-        }
-    } catch (err) {
-        console.error(err);
+    if (req.query.github) {
+        downloads += await tryGet(github, req.query.github);
+    }
+    if (req.query.curseforge) {
+        downloads += await tryGet(curseforge, req.query.curseforge);
+    }
+    if (req.query.spacedock) {
+        downloads += await tryGet(spacedock, req.query.spacedock);
     }
     if (req.query.format === "comma") {
         downloads = downloads.toLocaleString();
@@ -43,15 +38,18 @@ async function tryGet(source, key) {
     try {
         return await source(key);
     } catch (error) {
-        console.error(`Error in tryGet: ${error}`);
+        console.error(`Error in tryGet ${source}(${key}): ${error}`);
         return 0;
     }
 }
 
 async function github(repo) {
     const apiUrl = `https://api.github.com/repos/${repo}/releases`;
+    const headers = {
+        "User-Agent": "request"
+    }
     try {
-        const response = await axios.get(apiUrl);
+        const response = await axios.get(apiUrl, { headers });
         if (response.status === 200) {
             let totalDownloads = 0;
             for (const release of response.data) {
