@@ -26,7 +26,7 @@ All supported platforms below can be added as query parameters.
 | Platform | Usage | Example | Info |
 | --- | --- | --- | --- |
 | GitHub | github=\<username>/\<repo> | github=kna27/ksp-data-export | Adds total downloads from all GitHub releases |
-| CurseForge | curseforge=\<id> | curseforge=475559 | ID is "Project ID" from the "About Project" section on the CurseForge mod page |
+| CurseForge | curseforge=\<id> | curseforge=475559 | ID is "Project ID" from the "About Project" section on the CurseForge mod page. **Requires** `CURSEFORGE_API_KEY` **environment variable** |
 | Spacedock | spacedock=\<id> | spacedock=2711 | ID is the number in the mod page's URL |
 
 ### Format
