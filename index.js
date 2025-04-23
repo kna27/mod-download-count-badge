@@ -15,24 +15,30 @@ app.get("/", async (req, res) => {
     if (req.query.spacedock) {
         downloads += await tryGet(spacedock, req.query.spacedock);
     }
-    if (req.query.format === "comma") {
-        downloads = downloads.toLocaleString();
-    } else if (req.query.format === "metric") {
+
+    res.json({
+        schemaVersion: 1,
+        label: "Downloads",
+        message: format(downloads, req.query.format),
+        color: "green",
+    });
+});
+
+function format(downloads, format) {
+    if (format === "comma") {
+        return downloads.toLocaleString();
+    } else if (format === "metric") {
         const suffixes = ["", "K", "M", "B"];
         let suffixIndex = 0;
         while (downloads >= 1000) {
             downloads /= 1000;
             suffixIndex++;
         }
-        downloads = `${downloads.toFixed(2)}${suffixes[suffixIndex]}`;
+        return `${downloads.toFixed(2)}${suffixes[suffixIndex]}`;
+    } else {
+        return downloads.toString();
     }
-    res.json({
-        schemaVersion: 1,
-        label: "Downloads",
-        message: downloads.toString(),
-        color: "green",
-    });
-});
+}
 
 async function tryGet(source, key) {
     try {
@@ -46,8 +52,8 @@ async function tryGet(source, key) {
 async function github(repo) {
     const apiUrl = `https://api.github.com/repos/${repo}/releases`;
     const headers = {
-        "User-Agent": "request"
-    }
+        "User-Agent": "request",
+    };
     try {
         const response = await axios.get(apiUrl, { headers });
         if (response.status === 200) {
@@ -104,5 +110,5 @@ async function spacedock(id) {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
 });
