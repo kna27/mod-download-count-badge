@@ -18,6 +18,9 @@ e.x.
 
 ![Mod Downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fmod-download-count-badge.vercel.app%3Fgithub%3Dkna27%2Fksp-data-export%26spacedock%3D2711%26curseforge%3D475559%26format%3Dcomma)
 
+> [!TIP]
+> Use the [generator](https://kna27.github.io/mod-download-count-badge/generator.html) to easily generate the URL for you.
+
 ## Parameters
 
 ### Supported Platforms
