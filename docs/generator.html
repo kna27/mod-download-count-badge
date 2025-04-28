@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mod Download Count Badge Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.4;
+            margin: 0;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        table {
+            width: 75%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        th,
+        td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            box-sizing: border-box;
+            font-size: 0.9em;
+        }
+
+        select {
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            background-color: white;
+            font-size: 0.9em;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 6px 10px;
+            cursor: pointer;
+            margin: 6px 0;
+            font-size: 0.9em;
+        }
+
+        button:hover {
+            background: #0069d9;
+        }
+
+        .code-container {
+            position: relative;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 6px;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: nowrap;
+            text-align: left;
+            font-size: 0.85em;
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            bottom: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 0 8px;
+            cursor: pointer;
+            font-size: 0.8em;
+            height: calc(100% - 10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .copy-btn:hover {
+            background: #0069d9;
+        }
+
+        h2 {
+            font-size: 1em;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        #badge-preview-container {
+            background-color: white;
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: 75%;
+            text-align: center;
+        }
+
+        #badge-preview {
+            margin: 8px auto;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Mod Download Count Badge Generator</h1>
+    <p>The badge will only show the download counts for the platforms you fill in.</p>
+
+    <table id="platform-table">
+        <tr>
+            <th>Platform</th>
+            <th>ID</th>
+        </tr>
+    </table>
+
+    <div class="form-group">
+        <label for="format" style="display: inline-block; margin-right: 10px;">Format:</label>
+        <select id="format">
+            <option value="raw">Raw</option>
+            <option value="comma">Comma</option>
+            <option value="metric">Metric</option>
+        </select>
+    </div>
+
+    <button id="generate">Generate Badge</button>
+
+    <div id="badge-preview-container" style="margin-top: 15px; display: none;">
+        <img id="badge-preview" alt="Badge Preview">
+
+        <h2>Badge URL:</h2>
+        <div class="code-container">
+            <pre class="code-block" id="badge-url-code"></pre>
+            <button class="copy-btn" onclick="copyToClipboard('badge-url-code')">Copy</button>
+        </div>
+
+        <h2>Markdown Embed:</h2>
+        <div class="code-container">
+            <pre class="code-block" id="markdown-code"></pre>
+            <button class="copy-btn" onclick="copyToClipboard('markdown-code')">Copy</button>
+        </div>
+    </div>
+
+    <script>
+        const platforms = {
+            github: { id: 'github-id', placeholder: '<username>/<repo>' },
+            curseforge: { id: 'curseforge-id', placeholder: 'CurseForge Project ID' },
+            spacedock: { id: 'spacedock-id', placeholder: 'Spacedock Project ID' }
+        };
+
+        const table = document.getElementById('platform-table');
+        for (const [platform, { id, placeholder }] of Object.entries(platforms)) {
+            const row = document.createElement('tr');
+
+            const platformCell = document.createElement('td');
+            platformCell.textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
+            row.appendChild(platformCell);
+
+            const inputCell = document.createElement('td');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = id;
+            input.placeholder = placeholder;
+            inputCell.appendChild(input);
+            row.appendChild(inputCell);
+
+            table.appendChild(row);
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const button = element.nextElementSibling;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        document.getElementById('generate').addEventListener('click', function () {
+            const params = new URLSearchParams();
+
+            for (const [key, { id }] of Object.entries(platforms)) {
+                const value = document.getElementById(id).value;
+                if (value) {
+                    params.append(key, value);
+                }
+            }
+
+            const format = document.getElementById('format').value;
+            if (format) {
+                params.append('format', format);
+            }
+
+            const badgeUrl = `https://img.shields.io/endpoint?url=${encodeURIComponent(`https://mod-download-count-badge.vercel.app?${params.toString()}`)}`;
+
+            document.getElementById('badge-url-code').textContent = badgeUrl;
+            document.getElementById('markdown-code').textContent = `![Mod Downloads](${badgeUrl})`;
+            document.getElementById('badge-preview').src = badgeUrl;
+            document.getElementById('badge-preview-container').style.display = 'block';
+        });
+    </script>
+</body>
+
+</html>
